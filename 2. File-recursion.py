@@ -17,10 +17,12 @@ def find_files(suffix, path):
     Returns:
        a list of paths
     """
+
     files_found = []
     for f in os.listdir(path):
-        if os.path.isfile(path + f) and f.endswith(suffix):
-            files_found.append(path + f)
+        if os.path.isfile(path + f):
+            if f.endswith(suffix):
+                files_found.append(path + f)
         else:
             files_found += find_files(suffix, path + f + '/')
     return files_found
