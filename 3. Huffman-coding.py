@@ -11,6 +11,9 @@ class Node:
         self.left = None
         self.right = None
 
+    def get_pair(self):
+        return Pair(frequency=self.value, char=self.char)
+
     def __repr__(self):
         return str(self.value)
 
@@ -29,8 +32,29 @@ class HuffmanTree:
             self.root.right = Node(pair.frequency, pair.char)
             self.root.value = self.root.left.value + self.root.right.value
 
+    def mix_with_tree(self, tree):
+        mixed_tree = HuffmanTree(node=self.root)
+        mixed_tree.root.right = tree.root
+        mixed_tree.root.value = mixed_tree.root.left.value + mixed_tree.root.right.value
+        self.re_assign_root(mixed_tree)
+
     def re_assign_root(self, sub_tree):
         self.root = sub_tree.root
+
+    def traverse_dfs(self):
+        visit_order = list()
+        root = self.root
+
+        def traverse(node):
+            if node:
+                if node.get_pair().char is not None:
+                    visit_order.append(node.get_pair())
+
+                traverse(node.left)
+                traverse(node.right)
+
+        traverse(root)
+        return visit_order
 
     def __repr__(self):
         return str(self.root.left) + ' - \'' + str(self.root.value) + '\' - ' + str(self.root.right)
@@ -44,6 +68,8 @@ def create_subtrees_in_pairs(trees, lower_freq_pairs):
 
     if len(lower_freq_pairs) % 2 == 1:
         trees[0].append(lower_freq_pairs[-1])
+
+    return trees
 
 
 def lowest_frequencies(frequencies):
@@ -62,13 +88,14 @@ def add_one_freq_to_each_tree(trees, lower_freq_pairs):
     # so need to be added as new trees created in pairs
     if len(lower_freq_pairs) > len(trees):
         lower_freq_pairs = lower_freq_pairs[len(trees):]
-        create_subtrees_in_pairs(trees, lower_freq_pairs)
+        trees = create_subtrees_in_pairs(trees, lower_freq_pairs)
+    return trees, lower_freq_pairs
 
 
 def build_final_tree_from_trees(trees):
     trees = sorted(trees, key=lambda x: x.root.value)
     while len(trees) > 1:
-        trees[0].append(Pair(frequency=trees[1].root.value, char=trees[1].root.char))
+        trees[0].mix_with_tree(trees[1])
         del trees[1]
 
     return trees[0]
@@ -82,12 +109,13 @@ def huffman_encoding(data):
         lower_freq_pairs, frequencies = lowest_frequencies(frequencies)
 
         if len(trees) == 0:
-            create_subtrees_in_pairs(trees, lower_freq_pairs)
+            trees = create_subtrees_in_pairs(trees, lower_freq_pairs)
         else:
-            add_one_freq_to_each_tree(trees, lower_freq_pairs)
+            trees, lower_freq_pairs = add_one_freq_to_each_tree(trees, lower_freq_pairs)
 
     final_tree = build_final_tree_from_trees(trees)
-    print(final_tree)
+
+    print(sorted(final_tree.traverse_dfs(), key=lambda x: x.frequency, reverse=True))
 
     return None, None
 
