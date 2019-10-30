@@ -36,47 +36,58 @@ class HuffmanTree:
         return str(self.root.left) + ' - \'' + str(self.root.value) + '\' - ' + str(self.root.right)
 
 
-def huffman_encoding(data):
-    frequencies = [Pair(freq, char) for char, freq in Counter(sorted(data)).items()]
-    trees = []
-    while len(frequencies) > 0:
-        lower_freq = min(frequencies, key=lambda x: x.frequency).frequency
+def create_subtrees_in_pairs(trees, lower_freq_pairs):
+    for i in range(1, len(lower_freq_pairs), 2):
+        sub_tree = HuffmanTree(lower_freq_pairs[i - 1])
+        sub_tree.append(lower_freq_pairs[i])
+        trees.append(sub_tree)
 
-        lower_freq_pairs = [pair for pair in frequencies if pair.frequency == lower_freq]
-        frequencies = [pair for pair in frequencies if pair.frequency != lower_freq]
-        if len(trees) == 0:
-            for i in range(1, len(lower_freq_pairs), 2):
-                sub_tree = HuffmanTree(lower_freq_pairs[i - 1])
-                sub_tree.append(lower_freq_pairs[i])
-                trees.append(sub_tree)
+    if len(lower_freq_pairs) % 2 == 1:
+        trees[0].append(lower_freq_pairs[-1])
 
-            if len(lower_freq_pairs) % 2 == 1:
-                trees[0].append(lower_freq_pairs[-1])
-        else:
-            for i, tree in enumerate(trees):
-                if i + 1 <= len(lower_freq_pairs):
-                    tree.append(lower_freq_pairs[i])
-                else:
-                    break
 
-            if len(lower_freq_pairs) > len(trees):
-                lower_freq_pairs = lower_freq_pairs[len(trees):]
-                for i in range(1, len(lower_freq_pairs), 2):
-                    sub_tree = HuffmanTree(lower_freq_pairs[i - 1])
-                    sub_tree.append(lower_freq_pairs[i])
-                    trees.append(sub_tree)
+def lowest_frequencies(frequencies):
+    lower_freq = min(frequencies, key=lambda x: x.frequency).frequency
+    lower_freq_pairs = [pair for pair in frequencies if pair.frequency == lower_freq]
+    new_frequencies = [pair for pair in frequencies if pair.frequency != lower_freq]
+    return lower_freq_pairs, new_frequencies
 
-                if len(lower_freq_pairs) % 2 == 1:
-                    trees[0].append(lower_freq_pairs[-1])
 
-    print(trees)
+def add_one_freq_to_each_tree(trees, lower_freq_pairs):
+    for i, tree in enumerate(trees):
+        if i + 1 <= len(lower_freq_pairs):
+            tree.append(lower_freq_pairs[i])
+
+    # if trees added just 3 and there are 5 letters in this frequency -> 2 letters not added
+    # so need to be added as new trees created in pairs
+    if len(lower_freq_pairs) > len(trees):
+        lower_freq_pairs = lower_freq_pairs[len(trees):]
+        create_subtrees_in_pairs(trees, lower_freq_pairs)
+
+
+def build_final_tree_from_trees(trees):
     trees = sorted(trees, key=lambda x: x.root.value)
-    print(trees)
     while len(trees) > 1:
         trees[0].append(Pair(frequency=trees[1].root.value, char=trees[1].root.char))
         del trees[1]
 
-    print(trees)
+    return trees[0]
+
+
+def huffman_encoding(data):
+    trees = []
+    frequencies = [Pair(freq, char) for char, freq in Counter(sorted(data)).items()]
+
+    while len(frequencies) > 0:
+        lower_freq_pairs, frequencies = lowest_frequencies(frequencies)
+
+        if len(trees) == 0:
+            create_subtrees_in_pairs(trees, lower_freq_pairs)
+        else:
+            add_one_freq_to_each_tree(trees, lower_freq_pairs)
+
+    final_tree = build_final_tree_from_trees(trees)
+    print(final_tree)
 
     return None, None
 
