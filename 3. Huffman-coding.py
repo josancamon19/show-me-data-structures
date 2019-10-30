@@ -56,43 +56,69 @@ class HuffmanTree:
         traverse(root)
         return visit_order
 
+    def encode_data(self, data):
+        pass
+
     def __repr__(self):
         return str(self.root.left) + ' - \'' + str(self.root.value) + '\' - ' + str(self.root.right)
 
 
-def create_subtrees_in_pairs(trees, lower_freq_pairs):
-    for i in range(1, len(lower_freq_pairs), 2):
-        sub_tree = HuffmanTree(lower_freq_pairs[i - 1])
-        sub_tree.append(lower_freq_pairs[i])
+def lowest_frequencies(frequencies):
+    """
+    1.
+    frequencies: Named tuple 'Pair' built based on repetition of each character in data
+
+    we are getting the lowest frequency in a letter in a string and getting all the letters with the
+    same frequency, then deleting those for the original frequencies array
+    """
+    lowest_freq = min(frequencies, key=lambda x: x.frequency).frequency
+    lowest_freq_pairs = [pair for pair in frequencies if pair.frequency == lowest_freq]
+    new_frequencies = [pair for pair in frequencies if pair.frequency != lowest_freq]
+    return lowest_freq_pairs, new_frequencies
+
+
+def create_subtrees_in_pairs(trees, lowest_freq_pairs):
+    """
+    2.
+    iterating over lowest_freq_pairs each 2 -> getting i and i - 1
+    using those to build an independent tree and add it to our original list of trees.
+
+    if the len of lowest_freq_pairs is an odd number --> append last frequency Pair and append it to trees[0]
+    """
+    for i in range(1, len(lowest_freq_pairs), 2):
+        sub_tree = HuffmanTree(lowest_freq_pairs[i - 1])
+        sub_tree.append(lowest_freq_pairs[i])
         trees.append(sub_tree)
 
-    if len(lower_freq_pairs) % 2 == 1:
-        trees[0].append(lower_freq_pairs[-1])
-
-    return trees
+    if len(lowest_freq_pairs) % 2 == 1:
+        trees[0].append(lowest_freq_pairs[-1])
 
 
-def lowest_frequencies(frequencies):
-    lower_freq = min(frequencies, key=lambda x: x.frequency).frequency
-    lower_freq_pairs = [pair for pair in frequencies if pair.frequency == lower_freq]
-    new_frequencies = [pair for pair in frequencies if pair.frequency != lower_freq]
-    return lower_freq_pairs, new_frequencies
+def add_one_freq_to_each_tree(trees, lowest_freq_pairs):
+    """
+    if trees is not empty we cannot create a bunch of leaf nodes all in the same level, instead we need to
+    append to each tree in trees a new lowest_frequency --> meaning appending to a full binary tree a new node
 
+    --> how to address that? -> the current_tree.root becomes a new_tree.left and new_tree.right is the new node
 
-def add_one_freq_to_each_tree(trees, lower_freq_pairs):
+    Finally if the len of lowest_freq_pairs is greater than the number of trees -> we create_subtrees_in_pairs with the
+    residual ones
+    """
     for i, tree in enumerate(trees):
-        if i + 1 <= len(lower_freq_pairs):
-            tree.append(lower_freq_pairs[i])
+        if i + 1 <= len(lowest_freq_pairs):
+            tree.append(lowest_freq_pairs[i])
 
     # if trees added just 3 and there are 5 letters in this frequency -> 2 letters not added
     # so need to be added as new trees created in pairs
-    if len(lower_freq_pairs) > len(trees):
-        lower_freq_pairs = lower_freq_pairs[len(trees):]
-        trees = create_subtrees_in_pairs(trees, lower_freq_pairs)
-    return trees, lower_freq_pairs
+    if len(lowest_freq_pairs) > len(trees):
+        lowest_freq_pairs = lowest_freq_pairs[len(trees):]
+        create_subtrees_in_pairs(trees, lowest_freq_pairs)
 
 
 def build_final_tree_from_trees(trees):
+    """'
+    with a sorted array of different trees, add to trees[0]  trees[1] .. trees[n] one by one
+    """
     trees = sorted(trees, key=lambda x: x.root.value)
     while len(trees) > 1:
         trees[0].mix_with_tree(trees[1])
@@ -106,12 +132,12 @@ def huffman_encoding(data):
     frequencies = [Pair(freq, char) for char, freq in Counter(sorted(data)).items()]
 
     while len(frequencies) > 0:
-        lower_freq_pairs, frequencies = lowest_frequencies(frequencies)
+        lowest_freq_pairs, frequencies = lowest_frequencies(frequencies)  # 1
 
         if len(trees) == 0:
-            trees = create_subtrees_in_pairs(trees, lower_freq_pairs)
+            create_subtrees_in_pairs(trees, lowest_freq_pairs)  # 2
         else:
-            trees, lower_freq_pairs = add_one_freq_to_each_tree(trees, lower_freq_pairs)
+            add_one_freq_to_each_tree(trees, lowest_freq_pairs)  # 3
 
     final_tree = build_final_tree_from_trees(trees)
 
