@@ -1,12 +1,27 @@
 import sys
+from collections import Counter
+
+
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+
+class BinaryTree:
+    def __init__(self):
+        self.root = None
 
 
 def huffman_encoding(data):
-    pass
+    frequencies = Counter([c for c in sorted(data)])
+
+    return None, None
 
 
 def huffman_decoding(data, tree):
-    pass
+    return None, None
 
 
 if __name__ == "__main__":
