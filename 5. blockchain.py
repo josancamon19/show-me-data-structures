@@ -32,13 +32,4 @@ class BlockChain:
         return self.blocks.get(hash_value, None)
 
     def size(self):
-        if self.head is None:
-            return 0
-
-        current = self.blocks.get(self.head, None)
-        size = 1 if current else 0
-        while current:
-            current = self.blocks.get(current.previous_hash)
-            size += 1
-
-        return size
+        return len(self.blocks)

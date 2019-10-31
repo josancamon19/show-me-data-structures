@@ -56,10 +56,24 @@ class HuffmanTree:
         traverse(root)
         return visit_order
 
-    def encode_data(self, data):
-        pass
+    def find_path_to_char(self, char, node, previous_path_found=""):
+        if node:
+            if node.get_pair().char == char:
+                return previous_path_found
+
+            found_left = self.find_path_to_char(char, node.left, previous_path_found + "0")
+            if found_left:
+                return found_left
+
+            found_right = self.find_path_to_char(char, node.right, previous_path_found + "1")
+            if found_right:
+                return found_right
+
+    def get_encoded_data(self, data):
+        return ' '.join([self.find_path_to_char(c, self.root) for c in data])
 
     def __repr__(self):
+        # return '\n'.join(self.traverse_dfs())
         return str(self.root.left) + ' - \'' + str(self.root.value) + '\' - ' + str(self.root.right)
 
 
@@ -140,10 +154,9 @@ def huffman_encoding(data):
             add_one_freq_to_each_tree(trees, lowest_freq_pairs)  # 3
 
     final_tree = build_final_tree_from_trees(trees)
+    data_encoded = final_tree.get_encoded_data(data)
 
-    print(sorted(final_tree.traverse_dfs(), key=lambda x: x.frequency, reverse=True))
-
-    return None, None
+    return data_encoded, final_tree
 
 
 def huffman_decoding(data, t):
@@ -152,14 +165,14 @@ def huffman_decoding(data, t):
 
 if __name__ == "__main__":
     codes = {}
-
+    #
     a_great_sentence = "The bird is the word"
 
     print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
     print("The content of the data is: {}\n".format(a_great_sentence))
 
     encoded_data, t = huffman_encoding(a_great_sentence)
-    #
+
     # print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
     # print("The content of the encoded data is: {}\n".format(encoded_data))
     #
