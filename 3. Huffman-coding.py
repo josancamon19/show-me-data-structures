@@ -72,6 +72,24 @@ class HuffmanTree:
     def get_encoded_data(self, data):
         return ' '.join([self.find_path_to_char(c, self.root) for c in data])
 
+    def find_char_from_path(self, path, node):
+        if node:
+            if node.get_pair().char is not None:
+                return node.get_pair().char
+
+            if len(path) > 0:
+                direction = path[0]
+                char = None
+                if direction == "0":
+                    char = self.find_char_from_path(path[1:], node.left)
+                elif direction == "1":
+                    char = self.find_char_from_path(path[1:], node.right)
+
+                return char
+
+    def decode_data(self, data):
+        return ''.join([self.find_char_from_path(path, self.root) for path in data.split()])
+
     def __repr__(self):
         # return '\n'.join(self.traverse_dfs())
         return str(self.root.left) + ' - \'' + str(self.root.value) + '\' - ' + str(self.root.right)
@@ -160,7 +178,7 @@ def huffman_encoding(data):
 
 
 def huffman_decoding(data, t):
-    return None, None
+    return t.decode_data(data)
 
 
 if __name__ == "__main__":
@@ -173,10 +191,9 @@ if __name__ == "__main__":
 
     encoded_data, t = huffman_encoding(a_great_sentence)
 
-    # print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
-    # print("The content of the encoded data is: {}\n".format(encoded_data))
-    #
-    # decoded_data = huffman_decoding(encoded_data, tree)
-    #
-    # print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
-    # print("The content of the encoded data is: {}\n".format(decoded_data))
+    print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data.replace(' ', ''), base=2))))
+    print("The content of the encoded data is: {}\n".format(encoded_data))
+
+    decoded_data = huffman_decoding(encoded_data, t)
+    print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
+    print("The content of the encoded data is: {}\n".format(decoded_data))
