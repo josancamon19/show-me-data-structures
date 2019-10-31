@@ -1,13 +1,14 @@
 import hashlib
+from datetime import datetime
 
 
 class Block:
 
-    def __init__(self, timestamp, data, previous_hash):
-        self.timestamp = timestamp
+    def __init__(self, data, previous_hash):
+        self.timestamp = datetime.utcnow()
         self.data = data
-        self.previous_hash = previous_hash
         self.hash = self.calc_hash()
+        self.previous_hash = previous_hash
 
     def calc_hash(self):
         sha = hashlib.sha256()
@@ -35,9 +36,9 @@ class BlockChain:
             return 0
 
         current = self.blocks.get(self.head, None)
-        i = 0
+        size = 1 if current else 0
         while current:
             current = self.blocks.get(current.previous_hash)
-            i += 1
+            size += 1
 
-        return i
+        return size
