@@ -34,6 +34,7 @@ class HuffmanTree:
 
     def mix_with_tree(self, tree):
         mixed_tree = HuffmanTree(node=self.root)
+
         mixed_tree.root.right = tree.root
         mixed_tree.root.value = mixed_tree.root.left.value + mixed_tree.root.right.value
         self.re_assign_root(mixed_tree)
@@ -97,7 +98,7 @@ class HuffmanTree:
 
 def lowest_frequencies(frequencies):
     """
-    1.
+    1. O(n)
     frequencies: Named tuple 'Pair' built based on repetition of each character in data
 
     we are getting the lowest frequency in a letter in a string and getting all the letters with the
@@ -111,7 +112,7 @@ def lowest_frequencies(frequencies):
 
 def create_subtrees_in_pairs(trees, lowest_freq_pairs):
     """
-    2.
+    2. O(n)
     iterating over lowest_freq_pairs each 2 -> getting i and i - 1
     using those to build an independent tree and add it to our original list of trees.
 
@@ -148,7 +149,7 @@ def add_one_freq_to_each_tree(trees, lowest_freq_pairs):
 
 
 def build_final_tree_from_trees(trees):
-    """'
+    """ O(nlogn)
     with a sorted array of different trees, add to trees[0]  trees[1] .. trees[n] one by one
     """
     trees = sorted(trees, key=lambda x: x.root.value)
@@ -161,18 +162,18 @@ def build_final_tree_from_trees(trees):
 
 def huffman_encoding(data):
     trees = []
-    frequencies = [Pair(freq, char) for char, freq in Counter(sorted(data)).items()]
+    frequencies = [Pair(freq, char) for char, freq in Counter(sorted(data)).items()]  # O(n^2)
 
-    while len(frequencies) > 0:
-        lowest_freq_pairs, frequencies = lowest_frequencies(frequencies)  # 1
+    while len(frequencies) > 0:  # O(n)
+        lowest_freq_pairs, frequencies = lowest_frequencies(frequencies)  # 1 O(n)
 
         if len(trees) == 0:
-            create_subtrees_in_pairs(trees, lowest_freq_pairs)  # 2
+            create_subtrees_in_pairs(trees, lowest_freq_pairs)  # 2 O(n)
         else:
-            add_one_freq_to_each_tree(trees, lowest_freq_pairs)  # 3
+            add_one_freq_to_each_tree(trees, lowest_freq_pairs)  # 3 O(n^2)
 
-    final_tree = build_final_tree_from_trees(trees)
-    data_encoded = final_tree.get_encoded_data(data)
+    final_tree = build_final_tree_from_trees(trees)  # O(nlogn)
+    data_encoded = final_tree.get_encoded_data(data)  # O(n^2)
 
     return data_encoded, final_tree
 
@@ -183,7 +184,7 @@ def huffman_decoding(data, t):
 
 if __name__ == "__main__":
     codes = {}
-    #
+
     a_great_sentence = "The bird is the word"
 
     print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
