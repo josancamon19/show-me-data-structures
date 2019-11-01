@@ -57,40 +57,6 @@ class HuffmanTree:
         traverse(root)
         return visit_order
 
-    def find_path_to_char(self, char, node, previous_path_found=""):
-        if node:
-            if node.get_pair().char == char:
-                return previous_path_found
-
-            found_left = self.find_path_to_char(char, node.left, previous_path_found + "0")
-            if found_left:
-                return found_left
-
-            found_right = self.find_path_to_char(char, node.right, previous_path_found + "1")
-            if found_right:
-                return found_right
-
-    def get_encoded_data(self, data):
-        return ' '.join([self.find_path_to_char(c, self.root) for c in data])
-
-    def find_char_from_path(self, path, node):
-        if node:
-            if node.get_pair().char is not None:
-                return node.get_pair().char
-
-            if len(path) > 0:
-                direction = path[0]
-                char = None
-                if direction == "0":
-                    char = self.find_char_from_path(path[1:], node.left)
-                elif direction == "1":
-                    char = self.find_char_from_path(path[1:], node.right)
-
-                return char
-
-    def decode_data(self, data):
-        return ''.join([self.find_char_from_path(path, self.root) for path in data.split()])
-
     def __repr__(self):
         # return '\n'.join(self.traverse_dfs())
         return str(self.root.left) + ' - \'' + str(self.root.value) + '\' - ' + str(self.root.right)
@@ -160,6 +126,24 @@ def build_final_tree_from_trees(trees):
     return trees[0]
 
 
+def find_path_to_char(char, node, previous_path_found=""):
+    if node:
+        if node.get_pair().char == char:
+            return previous_path_found
+
+        found_left = find_path_to_char(char, node.left, previous_path_found + "0")
+        if found_left:
+            return found_left
+
+        found_right = find_path_to_char(char, node.right, previous_path_found + "1")
+        if found_right:
+            return found_right
+
+
+def get_encoded_data(root_node, data):
+    return ' '.join([find_path_to_char(c, root_node) for c in data])
+
+
 def huffman_encoding(data):
     trees = []
     frequencies = [Pair(freq, char) for char, freq in Counter(sorted(data)).items()]  # O(n^2)
@@ -173,13 +157,29 @@ def huffman_encoding(data):
             add_one_freq_to_each_tree(trees, lowest_freq_pairs)  # 3 O(n^2)
 
     final_tree = build_final_tree_from_trees(trees)  # O(nlogn)
-    data_encoded = final_tree.get_encoded_data(data)  # O(n^2)
+    data_encoded = get_encoded_data(final_tree.root, data)  # O(n^2)
 
     return data_encoded, final_tree
 
 
-def huffman_decoding(data, t):
-    return t.decode_data(data)
+def find_char_from_path(path, node):
+    if node:
+        if node.get_pair().char is not None:
+            return node.get_pair().char
+
+        if len(path) > 0:
+            direction = path[0]
+            char = None
+            if direction == "0":
+                char = find_char_from_path(path[1:], node.left)
+            elif direction == "1":
+                char = find_char_from_path(path[1:], node.right)
+
+            return char
+
+
+def huffman_decoding(data, codified_tree):
+    return ''.join([find_char_from_path(path, codified_tree.root) for path in data.split()])
 
 
 if __name__ == "__main__":
