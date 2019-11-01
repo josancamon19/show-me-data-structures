@@ -13,6 +13,8 @@ class LinkedList:
 
     def __str__(self):
         cur_head = self.head
+        if cur_head is None:
+            return "-- Empty --"
         out_string = ""
         while cur_head:
             out_string += str(cur_head.value) + " -> "
@@ -43,6 +45,11 @@ class LinkedList:
 
 def union(list1, list2):
     # Your Solution Here
+
+    if list1 is None or type(list1) is not LinkedList or list2 is None or type(list2) is not LinkedList:
+        print("Invalid Arguments, lists cannot be None")
+        return LinkedList()
+
     if list1.head is None:
         return list2
 
@@ -63,6 +70,11 @@ def union(list1, list2):
 
 def intersection(list1, list2):
     # Your Solution Here
+
+    if list1 is None or type(list1) is not LinkedList or list2 is None or type(list2) is not LinkedList:
+        print("Invalid Arguments, lists cannot be None")
+        return LinkedList()
+
     intersected_linked_list = LinkedList()
 
     current_l1 = list1.head
@@ -107,8 +119,10 @@ if __name__ == '__main__':
     for i in element_2:
         linked_list_2.append(i)
 
-    print(union(linked_list_1, linked_list_2))
-    print(intersection(linked_list_1, linked_list_2))
+    # Union operation returns element_1 + element_2
+    print('\nUnion operation: ', union(linked_list_1, linked_list_2))
+    # Intersection operation returns set(element_1).intersection(set(element_2))
+    print('Intersection operation: ', intersection(linked_list_1, linked_list_2))
 
     # Test case 2
 
@@ -124,5 +138,38 @@ if __name__ == '__main__':
     for i in element_2:
         linked_list_4.append(i)
 
-    print(union(linked_list_3, linked_list_4))
-    print(intersection(linked_list_3, linked_list_4))
+    # Union operation returns element_1 + element_2
+    print('\nUnion operation: ', union(linked_list_3, linked_list_4))
+    # element_1 and element_2 are all different  --> 0 intersections
+    print('Intersection operation: ', intersection(linked_list_3, linked_list_4))
+
+    # Test case 3
+
+    linked_list_5 = LinkedList()
+    linked_list_6 = LinkedList()
+
+    element_1 = []
+    element_2 = [1, 7, 8, 9, 11, 21, 1]
+
+    for i in element_1:
+        linked_list_5.append(i)
+
+    for i in element_2:
+        linked_list_6.append(i)
+
+    # Union operation element_1 is empty so return element_2 [1, 7, 8, 9, 11, 21, 1]
+    print('\nUnion operation: ', union(linked_list_5, linked_list_6))
+    # Intersection operation element_1 is empty so 0 intersections
+    print('Intersection operation: ', intersection(linked_list_5, linked_list_6))
+
+    print('\n\n--- Invalid Operations ---')
+
+    # all will return empty LinkedList() and print a message Invalid Arguments, lists cannot be None
+    print('\nUnion operation: ', union(linked_list_5, None))
+    print('Intersection operation: ', intersection(linked_list_5, None))
+
+    print('\nUnion operation: ', union(None, linked_list_6))
+    print('Intersection operation: ', intersection(None, linked_list_6))
+
+    print('\nUnion operation: ', union(None, None))
+    print('Intersection operation: ', intersection(None, None))

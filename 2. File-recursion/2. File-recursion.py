@@ -18,6 +18,14 @@ def find_files(suffix, path):
        a list of paths
     """
 
+    if not os.path.isdir(path):
+        print("Add a valid directory path")
+        return []
+
+    if not suffix or len(suffix) == 0 or suffix.isnumeric():
+        print("This is not a valid suffix", str(suffix))
+        return []
+
     files_found = []
     for f in os.listdir(path):
         if os.path.isfile(path + f):
@@ -29,4 +37,7 @@ def find_files(suffix, path):
 
 
 if __name__ == '__main__':
-    print(find_files('.c', 'testdir/'))
+    print(find_files('.c', 'testdir/'))  # return all files with .c extension in testdir/
+    print(find_files('.h', 'testdir/'))  # return all files with .h extension in testdir/
+    print(find_files('.h', 'te'))  # te is not a valid dir
+    print(find_files('', 'testdir/'))  # '' suffix is not valid

@@ -28,6 +28,10 @@ def is_user_in_group(user, group):
       user(str): user name/id
       group(class:Group): group to check user membership against
     """
+    if not user or not group or type(group) is not Group:
+        print("Invalid arguments")
+        return None
+
     if user in group.users:
         return True
 
@@ -50,4 +54,15 @@ if __name__ == '__main__':
     child.add_group(sub_child)
     parent.add_group(child)
 
-    print(is_user_in_group(sub_child_user, parent))
+    sub_child_user2 = "sub_child_user_2"
+    sub_child_2 = Group("subchild2")
+    sub_child_2.add_user(sub_child_user2)
+    parent.add_group(sub_child_2)
+
+    print(is_user_in_group(sub_child_user, parent))  # True
+    print(is_user_in_group(sub_child_user2, parent))  # True
+
+    print(is_user_in_group(None, parent))  # User arg cannot be None
+    print(is_user_in_group(sub_child_user2, None))  # Group arg cannot be None
+    print(is_user_in_group(sub_child_user2, "None"))  # Group arg must be Group type
+    print(is_user_in_group("", parent))  # Invalid user

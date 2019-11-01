@@ -81,7 +81,7 @@ if __name__ == '__main__':
     our_cache.set(5, 5)
     our_cache.set(6, 6)
 
-    print(our_cache.get(3))  # returns -1 because the cache reached it's capacity and 3 was the least recently used entry
+    print(our_cache.get(3))  # returns -1 because the cache reached it's capacity and 3 was the least recently used
     print(our_cache.get(5))  # should return 5
     print(our_cache.get(6))  # should return 6
 
