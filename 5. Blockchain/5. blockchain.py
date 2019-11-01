@@ -4,32 +4,35 @@ from datetime import datetime
 
 class Block:
 
-    def __init__(self, data, previous_hash):
-        self.timestamp = datetime.utcnow()
+    def __init__(self, index, timestamp, data, previous_hash):
+        self.index = index
+        self.timestamp = timestamp
         self.data = data
-        self.hash = self.calc_hash()
         self.previous_hash = previous_hash
+        self.hash = self.calc_hash()
 
     def calc_hash(self):
         sha = hashlib.sha256()
-
-        hash_str = self.data.encode('utf-8')
-
-        sha.update(hash_str)
+        sha.update(str(self.index).encode('utf-8') + str(self.timestamp).encode('utf-8') +
+                   str(self.data).encode('utf-8') + str(self.previous_hash).encode('utf-8'))
         return sha.hexdigest()
 
 
-class BlockChain:
-    def __init__(self):
-        self.blocks = {}
-        self.head = None
+def next_block(last_block):
+    if last_block is None or type(last_block) is not Block:
+        print("Invalid Last block")
+        return
+    this_index = last_block.index + 1
+    this_timestamp = datetime.now()
+    this_data = "I'm block {}".format(this_index)
+    this_hash = last_block.hash
+    return Block(this_index, this_timestamp, this_data, this_hash)
 
-    def append(self, block):
-        self.head = block
-        self.blocks[block.hash] = block
 
-    def get_hash(self, hash_value):
-        return self.blocks.get(hash_value, None)
+if __name__ == '__main__':
+    chain = [Block(0, datetime.now(), "First Block", "0")]
+    for i in range(0, 10):
+        chain.append(next_block(chain[-1]))
 
-    def size(self):
-        return len(self.blocks)
+    for block in chain:
+        print(block.data)

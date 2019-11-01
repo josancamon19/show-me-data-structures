@@ -2,6 +2,8 @@
   <dictionary name="josancamon19">
     <words>
       <w>blockchain</w>
+      <w>logn</w>
+      <w>nlogn</w>
     </words>
   </dictionary>
 </component>

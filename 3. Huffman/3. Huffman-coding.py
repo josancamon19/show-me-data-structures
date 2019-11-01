@@ -84,6 +84,11 @@ def create_subtrees_in_pairs(trees, lowest_freq_pairs):
 
     if the len of lowest_freq_pairs is an odd number --> append last frequency Pair and append it to trees[0]
     """
+    if len(lowest_freq_pairs) == 1 and len(trees) == 0:
+        sub_tree = HuffmanTree(lowest_freq_pairs[0])
+        trees.append(sub_tree)
+        return
+
     for i in range(1, len(lowest_freq_pairs), 2):
         sub_tree = HuffmanTree(lowest_freq_pairs[i - 1])
         sub_tree.append(lowest_freq_pairs[i])
@@ -146,23 +151,34 @@ def get_encoded_data(root_node, data):
 
 def huffman_encoding(data):
     trees = []
-    frequencies = [Pair(freq, char) for char, freq in Counter(sorted(data)).items()]  # O(n^2)
 
-    while len(frequencies) > 0:  # O(n)
-        lowest_freq_pairs, frequencies = lowest_frequencies(frequencies)  # 1 O(n)
+    # sort -> logn -> Counter ( Space O(n), Time O(n)) ---> build frequencies arr costs O(nlogn)
+    frequencies = [Pair(freq, char) for char, freq in Counter(sorted(data)).items()]
+
+    # O(f) -> f set of different amounts of frequencies
+    # Worst case all different so forget O(f) exists ---> Just O(n)
+    while len(frequencies) > 0:
+
+        # O(2n) -> O(n) n = chars in data
+        lowest_freq_pairs, frequencies = lowest_frequencies(frequencies)
 
         if len(trees) == 0:
-            create_subtrees_in_pairs(trees, lowest_freq_pairs)  # 2 O(n)
+            # All different frequencies, so here there is only 1 frequency O(1)
+            create_subtrees_in_pairs(trees, lowest_freq_pairs)
         else:
-            add_one_freq_to_each_tree(trees, lowest_freq_pairs)  # 3 O(n^2)
+            # only 1 frequency  in lowest_freq_pairs, and trees always len 1 --> O(1)
+            add_one_freq_to_each_tree(trees, lowest_freq_pairs)
 
-    final_tree = build_final_tree_from_trees(trees)  # O(nlogn)
-    data_encoded = get_encoded_data(final_tree.root, data)  # O(n^2)
+    # trees here len = 1 so cost is O(1)
+    final_tree = build_final_tree_from_trees(trees)
+    # O(n) iterate over each char -> and get char encoded recursively takes O(n) --> O(n^2)
+    data_encoded = get_encoded_data(final_tree.root, data)
 
     return data_encoded, final_tree
 
 
 def find_char_from_path(path, node):
+    # This recursive function also takes O(n)
     if node:
         if node.get_pair().char is not None:
             return node.get_pair().char
@@ -179,13 +195,14 @@ def find_char_from_path(path, node):
 
 
 def huffman_decoding(data, codified_tree):
+    # Iterate over each "char" in data O(n)
     return ''.join([find_char_from_path(path, codified_tree.root) for path in data.split()])
 
 
 if __name__ == "__main__":
     codes = {}
 
-    a_great_sentence = "The bird is the word"
+    a_great_sentence = "The bird"
 
     print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
     print("The content of the data is: {}\n".format(a_great_sentence))
