@@ -35,5 +35,10 @@ def next_block(last_block):
 if __name__ == '__main__':
     chain = [Block(0, datetime.now(), "First Block", "0")]
     for i in range(0, 10):
-        chain.append(next_block(chain[-1]))
-    [print(block) for block in chain]
+        block = next_block(chain[-1])
+        if block.data is not None and len(block.data) > 0:
+            chain.append(block)
+    if len(chain) != 0:
+        [print(block) for block in chain]
+    else:
+        print('Block chain empty!')
