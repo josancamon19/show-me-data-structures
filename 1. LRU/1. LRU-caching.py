@@ -98,3 +98,7 @@ if __name__ == '__main__':
     our_cache.set(3, 100)
 
     print(our_cache.items)
+
+    our_cache = LruCache(0)
+    our_cache.set(1, 1)
+    print(our_cache.get(1))

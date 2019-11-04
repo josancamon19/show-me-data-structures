@@ -199,15 +199,19 @@ def huffman_decoding(data, codified_tree):
     return ''.join([find_char_from_path(path, codified_tree.root) for path in data.split()])
 
 
-if __name__ == "__main__":
-    codes = {}
+def test_case(data):
+    if data is None or len(str(data)) == 0:
+        print('Empty data!')
+        return
 
-    a_great_sentence = "The bird"
+    if type(data) != str:
+        print('Invalid data!', data)
+        return
 
-    print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
-    print("The content of the data is: {}\n".format(a_great_sentence))
+    print("The size of the data is: {}\n".format(sys.getsizeof(data)))
+    print("The content of the data is: {}\n".format(data))
 
-    encoded_data, t = huffman_encoding(a_great_sentence)
+    encoded_data, t = huffman_encoding(data)
 
     print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data.replace(' ', ''), base=2))))
     print("The content of the encoded data is: {}\n".format(encoded_data))
@@ -215,3 +219,10 @@ if __name__ == "__main__":
     decoded_data = huffman_decoding(encoded_data, t)
     print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
     print("The content of the encoded data is: {}\n".format(decoded_data))
+
+
+if __name__ == "__main__":
+    test_case('The bird is the word')
+    test_case('aaaaa')
+    test_case('')
+    test_case(123)
