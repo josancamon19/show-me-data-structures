@@ -17,6 +17,9 @@ class Block:
                    str(self.data).encode('utf-8') + str(self.previous_hash).encode('utf-8'))
         return sha.hexdigest()
 
+    def __repr__(self):
+        return 'I\'m block ' + str(self.index) + ', timestamp: ' + str(self.timestamp) + ', data: \"' + self.data + '\"'
+
 
 def next_block(last_block):
     if last_block is None or type(last_block) is not Block:
@@ -33,6 +36,4 @@ if __name__ == '__main__':
     chain = [Block(0, datetime.now(), "First Block", "0")]
     for i in range(0, 10):
         chain.append(next_block(chain[-1]))
-
-    for block in chain:
-        print(block.data)
+    [print(block) for block in chain]
