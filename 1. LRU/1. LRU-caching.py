@@ -49,6 +49,10 @@ class LruCache(object):
         head = self.items.get(self.head, None)
         new_node = Node(value)
 
+        if self.capacity == 0:
+            print('Cannot perform operations on 0 capacity cache')
+            return
+
         if head is None:
             self.head = key
             self.tail = key
