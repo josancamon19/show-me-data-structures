@@ -17,7 +17,6 @@ def find_files(suffix, path):
     Returns:
        a list of paths
     """
-
     if not os.path.isdir(path):
         print("Add a valid directory path")
         return []
@@ -37,7 +36,8 @@ def find_files(suffix, path):
 
 
 if __name__ == '__main__':
-    print(find_files('.c', 'testdir/'))  # return all files with .c extension in testdir/
-    print(find_files('.h', 'testdir/'))  # return all files with .h extension in testdir/
-    print(find_files('.h', 'te'))  # te is not a valid dir
-    print(find_files('', 'testdir/'))  # '' suffix is not valid
+    path = '2. File-recursion/'
+    print(find_files('.c', path + 'testdir/'))  # return all files with .c extension in testdir/
+    print(find_files('.h', path + 'testdir/'))  # return all files with .h extension in testdir/
+    print(find_files('.h', path + 'te'))  # te is not a valid dir
+    print(find_files('', path + 'testdir/'))  # '' suffix is not valid
