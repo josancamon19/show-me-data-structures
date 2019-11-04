@@ -76,34 +76,60 @@ def intersection(list1, list2):
         return LinkedList()
 
     intersected_linked_list = LinkedList()
+    s = set()
 
     current_l1 = list1.head
     while current_l1:
-
-        current_l2 = list2.head
-        while current_l2:
-
-            if current_l2.value == current_l1.value:
-                # print(current_l1, current_l2)
-
-                already_intersected = False
-                current_intersected = intersected_linked_list.head
-
-                while current_intersected:
-                    if current_intersected.value == current_l1.value:
-                        already_intersected = True
-                        break
-                    current_intersected = current_intersected.next
-
-                if not already_intersected:
-                    intersected_linked_list.append(current_l1.value)
-
-            current_l2 = current_l2.next
-
+        s.add(current_l1.value)
         current_l1 = current_l1.next
+
+    current_l2 = list2.head
+    while current_l2:
+        if current_l2.value in s:
+            intersected_linked_list.append(current_l2.value)
+            s.remove(current_l2.value)
+
+        current_l2 = current_l2.next
 
     return intersected_linked_list
 
+
+# def intersection2(list1, list2):
+#     # Your Solution Here
+#
+#     if list1 is None or type(list1) is not LinkedList or list2 is None or type(list2) is not LinkedList:
+#         print("Invalid Arguments, lists cannot be None")
+#         return LinkedList()
+#
+#     intersected_linked_list = LinkedList()
+#     s = set()
+#
+#     current_l1 = list1.head
+#     while current_l1:
+#
+#         current_l2 = list2.head
+#         while current_l2:
+#
+#             if current_l2.value == current_l1.value:
+#                 # print(current_l1, current_l2)
+#
+#                 already_intersected = False
+#                 current_intersected = intersected_linked_list.head
+#
+#                 while current_intersected:
+#                     if current_intersected.value == current_l1.value:
+#                         already_intersected = True
+#                         break
+#                     current_intersected = current_intersected.next
+#
+#                 if not already_intersected:
+#                     intersected_linked_list.append(current_l1.value)
+#
+#             current_l2 = current_l2.next
+#
+#         current_l1 = current_l1.next
+#
+#     return intersected_linked_list
 
 if __name__ == '__main__':
     # Test case 1
